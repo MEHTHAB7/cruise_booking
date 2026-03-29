@@ -31,6 +31,12 @@ import { PackagesModule } from './packages/packages.module';
       database: process.env.DB_NAME || 'cruise_booking',
       autoLoadEntities: true,
       synchronize: process.env.NODE_ENV !== 'production',
+      ssl: process.env.NODE_ENV === 'production',
+      extra: process.env.NODE_ENV === 'production' ? {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      } : {},
     }),
     ThrottlerModule.forRoot([{ ttl: 60, limit: 10 }]),
     AiModule,

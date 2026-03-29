@@ -1,0 +1,68 @@
+services:
+  # Database
+  - type: database
+    name: cruise-db
+    databaseName: cruise_booking
+    user: cruise_user
+    plan: free # or standard
+
+  # Backend (NestJS)
+  - type: web
+    name: cruise-backend
+    runtime: node
+    plan: free # or standard
+    region: oregon 
+    rootDir: cruise-backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        fromDatabase:
+          name: cruise-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cruise-db
+          property: port
+      - key: DB_USERNAME
+        fromDatabase:
+          name: cruise-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cruise-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cruise-db
+          property: database
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: cruise-frontend
+          property: url
+      - key: PORT
+        value: 10000 # Render's default but good to set
+
+  # Frontend (Next.js)
+  - type: web
+    name: cruise-frontend
+    runtime: node
+    plan: free # or standard
+    region: oregon
+    rootDir: cruise-frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: cruise-backend
+          property: url
+        suffix: /api
+      - key: PORT
+        value: 10000 

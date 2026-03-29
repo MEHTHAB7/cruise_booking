@@ -82,6 +82,7 @@ async function bootstrap() {
     user: process.env.DB_USERNAME || 'cruise_user',
     password: process.env.DB_PASSWORD || 'Str0ng_DB_Pass!2026',
     database: process.env.DB_NAME || 'cruise_booking',
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   });
 
   app.use(
@@ -89,6 +90,7 @@ async function bootstrap() {
       store: new PgSession({
         pool: pgPool,
         tableName: 'user_sessions',
+        createTableIfMissing: true,
       }),
       secret: process.env.SESSION_SECRET || 'CHANGE_THIS_IN_PRODUCTION',
       resave: false,

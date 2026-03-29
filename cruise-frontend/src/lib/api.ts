@@ -1,6 +1,6 @@
 let csrfToken: string | null = null;
 
-const BASE_URL = 'http://localhost:3001/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 // =========================
 // CSRF TOKEN
