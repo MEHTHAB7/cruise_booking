@@ -76,14 +76,21 @@ async function bootstrap() {
   // SESSION STORE (PostgreSQL)
   // =========================
   const PgSession = connectPgSimple(session);
-  const pgPool = new Pool({
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    user: process.env.DB_USERNAME || 'cruise_user',
-    password: process.env.DB_PASSWORD || 'Str0ng_DB_Pass!2026',
-    database: process.env.DB_NAME || 'cruise_booking',
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  });
+  const pgPool = new Pool(
+    process.env.DATABASE_URL
+      ? {
+          connectionString: process.env.DATABASE_URL,
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+        }
+      : {
+          host: process.env.DB_HOST || 'localhost',
+          port: parseInt(process.env.DB_PORT || '5432'),
+          user: process.env.DB_USERNAME || 'cruise_user',
+          password: process.env.DB_PASSWORD || 'Str0ng_DB_Pass!2026',
+          database: process.env.DB_NAME || 'cruise_booking',
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+        },
+  );
 
   app.use(
     session({
